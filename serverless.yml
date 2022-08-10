@@ -1,4 +1,4 @@
-service: my-store-app
+service: fashion-shop-app-andrei-kuchynski
 
 frameworkVersion: "3"
 
@@ -19,7 +19,7 @@ plugins:
 
 custom:
   client:
-    bucketName: fashion-shop-app-manual-creation-andrei-kuchynski
+    bucketName: fashion-shop-app-andrei-kuchynski
     distributionFolder: dist
   s3BucketName: ${self:custom.client.bucketName}
 
