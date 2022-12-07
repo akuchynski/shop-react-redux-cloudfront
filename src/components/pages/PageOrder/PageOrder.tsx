@@ -33,9 +33,9 @@ export default function PageOrder() {
   const { id } = useParams<{ id: string }>();
   const results = useQueries([
     {
-      queryKey: ["order", { id }],
+      queryKey: ["orders", { id }],
       queryFn: async () => {
-        const res = await axios.get<Order>(`${API_PATHS.order}/order/${id}`);
+        const res = await axios.get<Order>(`${API_PATHS.order}/orders/${id}`);
         return res.data;
       },
     },
@@ -43,7 +43,7 @@ export default function PageOrder() {
       queryKey: "products",
       queryFn: async () => {
         const res = await axios.get<AvailableProduct[]>(
-          `${API_PATHS.bff}/product/available`
+          `${API_PATHS.bff}/products`
         );
         return res.data;
       },
