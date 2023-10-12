@@ -12,6 +12,8 @@ import Box from "@mui/material/Box";
 import { useCart, useInvalidateCart } from "~/queries/cart";
 import AddressForm from "~/components/pages/PageCart/components/AddressForm";
 import { useSubmitOrder } from "~/queries/orders";
+import { useAvailableProducts } from "~/queries/products";
+import { CartItem } from "~/models/CartItem";
 
 enum CartStep {
   ReviewCart,
@@ -44,6 +46,7 @@ const steps = ["Review your cart", "Shipping address", "Review your order"];
 
 export default function PageCart() {
   const { data = [] } = useCart();
+  const { data: productsData = [] } = useAvailableProducts();
   const { mutate: submitOrder } = useSubmitOrder();
   const invalidateCart = useInvalidateCart();
   const [activeStep, setActiveStep] = React.useState<CartStep>(
@@ -52,6 +55,18 @@ export default function PageCart() {
   const [address, setAddress] = useState<Address>(initialAddressValues);
 
   const isCartEmpty = data.length === 0;
+
+  const cartItems: CartItem[] = data.map((item: CartItem) => {
+    const product = productsData.find(
+      (product) => product.id === item.product.id
+    );
+    return { product, count: item.count } as CartItem;
+  });
+
+  const total: number = cartItems.reduce(
+    (total, item) => item.count * item.product.price + total,
+    0
+  );
 
   const handleNext = () => {
     if (activeStep !== CartStep.ReviewOrder) {
@@ -64,6 +79,7 @@ export default function PageCart() {
         count: i.count,
       })),
       address,
+      total,
     };
 
     submitOrder(values as Omit<Order, "id">, {
@@ -100,7 +116,7 @@ export default function PageCart() {
       </Stepper>
       {isCartEmpty && <CartIsEmpty />}
       {!isCartEmpty && activeStep === CartStep.ReviewCart && (
-        <ReviewCart items={data} />
+        <ReviewCart items={cartItems} />
       )}
       {activeStep === CartStep.Address && (
         <AddressForm
@@ -110,7 +126,7 @@ export default function PageCart() {
         />
       )}
       {activeStep === CartStep.ReviewOrder && (
-        <ReviewOrder address={address} items={data} />
+        <ReviewOrder address={address} items={cartItems} />
       )}
       {activeStep === CartStep.Success && <Success />}
       {!isCartEmpty &&

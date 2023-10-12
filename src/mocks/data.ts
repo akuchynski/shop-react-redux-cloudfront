@@ -83,6 +83,7 @@ export const orders: Order[] = [
     statusHistory: [
       { status: OrderStatus.Open, timestamp: Date.now(), comment: "New order" },
     ],
+    total: 100,
   },
   {
     id: "2",
@@ -100,5 +101,6 @@ export const orders: Order[] = [
         comment: "Fancy order",
       },
     ],
+    total: 200,
   },
 ];
